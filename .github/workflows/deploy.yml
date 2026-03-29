@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # или "master", если ваша основная ветка так называется
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink } from 'lucide-react';
+import { Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink } from 'lucide-react';
 
 const App = () => {
   const team = [
@@ -11,55 +11,73 @@ const App = () => {
   const statistics = [
     { icon: TrendingUp, value: "460M", label: "Tons Produced Annually", color: "text-red-600" },
     { icon: Droplet, value: "11M", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
-    { icon: Fish, value: "1M+", label: "Seabirds & Mammals Die/Year", color: "text-cyan-600" },
+    { icon: Fish, value: "1M+", label: "Marine Animals Affected", color: "text-cyan-600" },
     { icon: Globe, value: "171T", label: "Plastic Particles in Ocean", color: "text-emerald-600" }
+  ];
+
+  const growthData = [
+    { year: '1950', value: '2M', height: 'h-4', label: '2' },
+    { year: '1970', value: '35M', height: 'h-12', label: '35' },
+    { year: '1990', value: '120M', height: 'h-24', label: '120' },
+    { year: '2010', value: '313M', height: 'h-48', label: '313' },
+    { year: '2020', value: '460M', height: 'h-64', label: '460' },
   ];
 
   const impacts = [
     {
       title: "Marine Life Threat",
-      description: "Sea turtles, whales, and seabirds mistake plastic for food. Over 800 marine species are affected. Ingestion causes starvation as stomachs fill with indigestible debris.",
+      description: "Over 800 species are affected by marine debris. Animals mistake plastic for food, leading to starvation and poisoning.",
       icon: Fish
     },
     {
-      title: "Ecosystem Disruption",
-      description: "Microplastics absorb persistent organic pollutants (POPs). These toxins bioaccumulate up the food chain, affecting everything from zooplankton to apex predators.",
+      title: "Microplastic Cycle",
+      description: "Plastics break down into particles smaller than 5mm, entering the food chain from plankton to human dinner plates.",
       icon: Leaf
     },
     {
-      title: "Human Health Risk",
-      description: "Microplastics have been detected in human blood and lung tissue. Chemicals like BPA and phthalates in plastic are linked to endocrine disruption and other health issues.",
+      title: "Human Health",
+      description: "Microplastics have been found in human blood and organs. Chemical additives in plastic disrupt hormonal systems.",
       icon: AlertCircle
     }
   ];
 
   const solutions = [
-    "Reduce single-use plastics: Choose reusable bags, bottles, and containers",
-    "Support plastic-free alternatives: Opt for bamboo, glass, or metal products",
-    "Proper waste disposal: Recycle correctly and participate in beach cleanups",
-    "Advocate for change: Support global treaties on plastic pollution reduction",
-    "Educate others: Share knowledge about the lifecycle of synthetic polymers",
-    "Circular Economy: Support brands that use post-consumer recycled (PCR) materials"
+    "Eliminate single-use items (straws, bags, cutlery)",
+    "Support circular economy and refill systems",
+    "Improve waste management and recycling technology",
+    "Global policy changes to limit virgin plastic production",
+    "Switch to sustainable materials like glass or bamboo",
+    "Participate in local cleanups and community education"
   ];
 
   const sources = [
-    { name: "OECD Global Plastics Outlook", url: "https://www.oecd.org/en/topics/sub-issues/plastics.html" },
-    { name: "UN Environment Programme (UNEP)", url: "https://www.unep.org/intergovernmental-negotiating-committee-plastic-pollution" },
-    { name: "The World Bank: Marine Pollution", url: "https://www.worldbank.org/en/topic/oceans-fisheries-and-coastal-economies" }
+    { name: "OECD: Global Plastics Outlook", url: "https://www.oecd.org/en/topics/sub-issues/plastics.html" },
+    { name: "Geyer et al. (2017) 'Production of all plastics'", url: "https://www.science.org/doi/10.1126/sciadv.1700782" },
+    { name: "UNEP: Visualizing Plastic Pollution", url: "https://www.unep.org/intergovernmental-negotiating-committee-plastic-pollution" }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 text-slate-900 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 text-slate-900 font-sans selection:bg-blue-200">
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.8s ease-out forwards;
+        }
+      `}</style>
+
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-16 px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
-            <Droplet className="w-4 h-4 mr-2" />
-            <span className="text-sm font-bold uppercase tracking-wider">Environmental Crisis</span>
+      <header className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-20 px-8">
+        <div className="max-w-6xl mx-auto text-center animate-fade-in">
+          <div className="inline-flex items-center bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
+            <Droplet className="w-4 h-4 mr-2 animate-pulse" />
+            <span className="text-xs font-bold uppercase tracking-widest">Global Environmental Report</span>
           </div>
-          <h1 className="text-6xl font-extrabold mb-4 tracking-tight">Plastic Pollution</h1>
-          <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
-            An urgent global challenge threatening our oceans, wildlife, and human health
+          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter">Plastic Pollution</h1>
+          <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed opacity-90">
+            Analyzing the exponential rise of synthetic waste and its impact on the biosphere.
           </p>
         </div>
       </header>
@@ -68,113 +86,129 @@ const App = () => {
       <section className="max-w-6xl mx-auto px-8 -mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statistics.map((stat, index) => (
-            <div key={index} className="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 transform hover:scale-105 transition-transform">
-              <stat.icon className={`w-10 h-10 mb-3 ${stat.color}`} />
-              <div className="text-4xl font-bold mb-1">{stat.value}</div>
-              <div className="text-sm text-slate-600 font-medium">{stat.label}</div>
+            <div key={index} 
+                 className="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 transform hover:-translate-y-2 transition-all duration-300 animate-fade-in"
+                 style={{ animationDelay: `${index * 150}ms` }}>
+              <stat.icon className={`w-10 h-10 mb-4 ${stat.color}`} />
+              <div className="text-4xl font-black mb-1 tracking-tight">{stat.value}</div>
+              <div className="text-sm text-slate-500 font-semibold uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Growth Chart Section */}
+      <section className="max-w-6xl mx-auto px-8 py-16 animate-fade-in">
+        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-100">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="max-w-md">
+              <h2 className="text-3xl font-black mb-4 flex items-center">
+                <TrendingUp className="w-8 h-8 mr-3 text-blue-600" />
+                The Surge
+              </h2>
+              <p className="text-slate-600">
+                Annual plastic production has increased nearly <b>230-fold</b> since 1950. 
+                Half of all plastic ever made was produced in just the last 15 years.
+              </p>
+            </div>
+            <div className="text-right">
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Global Production (Million Tons)</span>
+            </div>
+          </div>
+
+          <div className="flex items-end justify-between gap-3 h-80 border-b-2 border-slate-100 pb-2">
+            {growthData.map((d, i) => (
+              <div key={i} className="flex flex-col items-center w-full group">
+                <div className={`w-full max-w-[80px] bg-gradient-to-t from-blue-700 to-cyan-400 rounded-t-xl shadow-lg ${d.height} transition-all duration-500 group-hover:brightness-110 relative`}>
+                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {d.value}
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-slate-500 mt-6 group-hover:text-blue-600 transition-colors">{d.year}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Environmental Impacts */}
       <section className="max-w-6xl mx-auto px-8 py-16">
-        <div className="bg-white rounded-3xl p-10 shadow-xl mb-12">
-          <h2 className="text-3xl font-bold mb-6 flex items-center">
-            <Trash2 className="w-8 h-8 mr-3 text-red-500" />
-            Understanding the Crisis
-          </h2>
-          <div className="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-4">
-            <p>
-              Plastic pollution is no longer just a litter problem; it's a systemic environmental threat. Since 1950, plastic production has outpaced almost any other manufactured material. According to the <strong>OECD</strong>, only <strong>9% of plastic waste</strong> is successfully recycled globally.
-            </p>
-            <p>
-              Each year, an estimated <strong>11 million metric tons</strong> of plastic enter the ocean. Without immediate action, this flow is projected to triple by 2040. In the marine environment, plastic doesn't disappear—it fragments into <strong>microplastics</strong> (less than 5mm), which are now found even in the deepest parts of the Mariana Trench.
-            </p>
-          </div>
-        </div>
-
-        {/* Environmental Impacts */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8 text-center">Environmental & Health Impacts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {impacts.map((impact, index) => (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center mb-4">
-                  <impact.icon className="w-7 h-7 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold mb-3">{impact.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{impact.description}</p>
+        <h2 className="text-4xl font-black mb-12 text-center tracking-tight">Systemic Impact</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {impacts.map((impact, index) => (
+            <div key={index} className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:shadow-2xl transition-shadow animate-fade-in">
+              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6">
+                <impact.icon className="w-8 h-8 text-blue-600" />
               </div>
-            ))}
-          </div>
+              <h3 className="text-2xl font-bold mb-4 tracking-tight">{impact.title}</h3>
+              <p className="text-slate-600 leading-relaxed">{impact.description}</p>
+            </div>
+          ))}
         </div>
+      </section>
 
-        {/* Solutions */}
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-3xl p-10 shadow-xl mb-12">
-          <div className="flex items-center mb-6">
-            <Recycle className="w-8 h-8 mr-3" />
-            <h2 className="text-3xl font-bold">What Can We Do?</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {solutions.map((solution, index) => (
-              <div key={index} className="flex items-start space-x-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl">
-                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-sm font-bold">{index + 1}</span>
+      {/* Solutions Section */}
+      <section className="max-w-6xl mx-auto px-8 py-16">
+        <div className="bg-slate-900 text-white rounded-[3rem] p-10 md:p-16 shadow-2xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+          <div className="relative z-10">
+            <div className="flex items-center mb-10">
+              <Recycle className="w-10 h-10 mr-4 text-emerald-400" />
+              <h2 className="text-4xl font-black tracking-tight">Path to Recovery</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {solutions.map((solution, index) => (
+                <div key={index} className="flex items-start space-x-4 bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                  <span className="text-emerald-400 font-black text-xl">0{index + 1}</span>
+                  <p className="text-slate-300 font-medium leading-relaxed">{solution}</p>
                 </div>
-                <p className="leading-relaxed">{solution}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Project Info & Credits */}
-      <section className="max-w-6xl mx-auto px-8 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 flex items-start space-x-4">
-            <Clock className="text-orange-500 w-8 h-8 flex-shrink-0" />
-            <div>
-              <h3 className="font-bold text-lg mb-1">Deadline: March 31st</h3>
-              <p className="text-slate-500">Осталось совсем немного времени на финальные правки.</p>
+      {/* Data Sources & Team */}
+      <section className="max-w-6xl mx-auto px-8 py-16 border-t border-slate-200">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Sources */}
+          <div className="lg:col-span-1">
+            <h3 className="text-xl font-black mb-6 flex items-center">
+              <AlertCircle className="w-5 h-5 mr-2 text-blue-600" />
+              Scientific Data
+            </h3>
+            <div className="space-y-4">
+              {sources.map((source, idx) => (
+                <a key={idx} href={source.url} target="_blank" rel="noreferrer" 
+                   className="flex items-center text-slate-500 hover:text-blue-600 transition-colors group text-sm font-medium">
+                  <span className="truncate">{source.name}</span>
+                  <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+              ))}
             </div>
           </div>
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 flex items-start space-x-4">
-            <AlertCircle className="text-blue-500 w-8 h-8 flex-shrink-0" />
-            <div>
-              <h3 className="font-bold text-lg mb-1">Data Sources</h3>
-              <div className="flex flex-col space-y-1 mt-2">
-                {sources.map((source, idx) => (
-                  <a key={idx} href={source.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-sm flex items-center">
-                    {source.name} <ExternalLink className="w-3 h-3 ml-1" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-3xl p-10 shadow-xl">
-          <div className="flex items-center mb-8">
-            <Users className="w-6 h-6 mr-3 text-blue-600" />
-            <h2 className="text-2xl font-bold">Project Team</h2>
-          </div>
-          <div className="space-y-6">
-            {team.map((member, index) => (
-              <div key={index} className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-slate-100 pb-4 last:border-0 space-y-2 md:space-y-0">
-                <div>
-                  <h4 className="font-bold text-slate-800">{member.name}</h4>
-                  <p className="text-sm text-blue-600 font-medium uppercase">{member.role}</p>
+          {/* Team */}
+          <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+            <div className="flex items-center mb-8">
+              <Users className="w-6 h-6 mr-3 text-blue-600" />
+              <h2 className="text-2xl font-bold tracking-tight">Project Contributors</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {team.map((member, index) => (
+                <div key={index}>
+                  <h4 className="font-bold text-slate-900">{member.name}</h4>
+                  <p className="text-xs text-blue-600 font-bold uppercase tracking-widest mt-1 mb-2">{member.role}</p>
+                  <p className="text-xs text-slate-500 italic leading-relaxed">{member.task}</p>
                 </div>
-                <p className="text-slate-600 italic md:text-right md:max-w-xs">{member.task}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <footer className="text-center py-8 text-slate-400 text-sm">
-        Built with AI for School Project — 2026
+      <footer className="text-center py-12 text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">
+        Scientific Visualization — Group Project 2026
       </footer>
     </div>
   );

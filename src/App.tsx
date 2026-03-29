@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe } from 'lucide-react';
+import { Clock, Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink } from 'lucide-react';
 
 const App = () => {
   const team = [
@@ -9,26 +9,26 @@ const App = () => {
   ];
 
   const statistics = [
-    { icon: TrendingUp, value: "400M", label: "Tons Produced Annually", color: "text-red-600" },
-    { icon: Droplet, value: "8M", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
-    { icon: Fish, value: "100K+", label: "Marine Animals Die/Year", color: "text-cyan-600" },
-    { icon: Globe, value: "5.25T", label: "Plastic Pieces in Ocean", color: "text-emerald-600" }
+    { icon: TrendingUp, value: "460M", label: "Tons Produced Annually", color: "text-red-600" },
+    { icon: Droplet, value: "11M", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
+    { icon: Fish, value: "1M+", label: "Seabirds & Mammals Die/Year", color: "text-cyan-600" },
+    { icon: Globe, value: "171T", label: "Plastic Particles in Ocean", color: "text-emerald-600" }
   ];
 
   const impacts = [
     {
       title: "Marine Life Threat",
-      description: "Sea turtles, whales, and seabirds mistake plastic for food. Over 700 marine species are affected by plastic pollution, with ingestion and entanglement being the primary causes of death.",
+      description: "Sea turtles, whales, and seabirds mistake plastic for food. Over 800 marine species are affected. Ingestion causes starvation as stomachs fill with indigestible debris.",
       icon: Fish
     },
     {
       title: "Ecosystem Disruption",
-      description: "Microplastics infiltrate every level of the food chain, from plankton to apex predators. These particles carry toxic chemicals that accumulate in organisms and disrupt natural ecosystems.",
+      description: "Microplastics absorb persistent organic pollutants (POPs). These toxins bioaccumulate up the food chain, affecting everything from zooplankton to apex predators.",
       icon: Leaf
     },
     {
       title: "Human Health Risk",
-      description: "Microplastics have been found in human blood, lungs, and placentas. Chemicals from plastics can disrupt hormones and may contribute to serious health conditions.",
+      description: "Microplastics have been detected in human blood and lung tissue. Chemicals like BPA and phthalates in plastic are linked to endocrine disruption and other health issues.",
       icon: AlertCircle
     }
   ];
@@ -37,9 +37,15 @@ const App = () => {
     "Reduce single-use plastics: Choose reusable bags, bottles, and containers",
     "Support plastic-free alternatives: Opt for bamboo, glass, or metal products",
     "Proper waste disposal: Recycle correctly and participate in beach cleanups",
-    "Advocate for change: Support legislation that limits plastic production",
-    "Educate others: Share knowledge about plastic pollution impact",
-    "Choose sustainable brands: Buy from companies committed to reducing plastic"
+    "Advocate for change: Support global treaties on plastic pollution reduction",
+    "Educate others: Share knowledge about the lifecycle of synthetic polymers",
+    "Circular Economy: Support brands that use post-consumer recycled (PCR) materials"
+  ];
+
+  const sources = [
+    { name: "OECD Global Plastics Outlook", url: "https://www.oecd.org/en/topics/sub-issues/plastics.html" },
+    { name: "UN Environment Programme (UNEP)", url: "https://www.unep.org/intergovernmental-negotiating-committee-plastic-pollution" },
+    { name: "The World Bank: Marine Pollution", url: "https://www.worldbank.org/en/topic/oceans-fisheries-and-coastal-economies" }
   ];
 
   return (
@@ -80,13 +86,10 @@ const App = () => {
           </h2>
           <div className="prose prose-lg max-w-none text-slate-700 leading-relaxed space-y-4">
             <p>
-              Plastic pollution has become one of the most pressing environmental issues of our time. Since the 1950s, over <strong>9.2 billion tons</strong> of plastic have been produced, with only 9% being recycled. The rest ends up in landfills, incinerators, or our natural environment.
+              Plastic pollution is no longer just a litter problem; it's a systemic environmental threat. Since 1950, plastic production has outpaced almost any other manufactured material. According to the <strong>OECD</strong>, only <strong>9% of plastic waste</strong> is successfully recycled globally.
             </p>
             <p>
-              Every year, approximately <strong>8 million tons</strong> of plastic waste enters our oceans from coastal nations. This is equivalent to dumping one garbage truck of plastic into the ocean every single minute. At the current rate, by 2050, there will be more plastic than fish in the ocean by weight.
-            </p>
-            <p>
-              Plastic takes <strong>hundreds to thousands of years</strong> to decompose. Instead of biodegrading, it breaks down into smaller pieces called microplastics, which persist in the environment indefinitely and enter the food chain at every level.
+              Each year, an estimated <strong>11 million metric tons</strong> of plastic enter the ocean. Without immediate action, this flow is projected to triple by 2040. In the marine environment, plastic doesn't disappear—it fragments into <strong>microplastics</strong> (less than 5mm), which are now found even in the deepest parts of the Mariana Trench.
             </p>
           </div>
         </div>
@@ -126,7 +129,7 @@ const App = () => {
         </div>
       </section>
 
-      {/* Project Info */}
+      {/* Project Info & Credits */}
       <section className="max-w-6xl mx-auto px-8 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 flex items-start space-x-4">
@@ -139,19 +142,23 @@ const App = () => {
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 flex items-start space-x-4">
             <AlertCircle className="text-blue-500 w-8 h-8 flex-shrink-0" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Format: Interactive Page</h3>
-              <p className="text-slate-500">Выбрали формат лендинга вместо постера для наглядности.</p>
+              <h3 className="font-bold text-lg mb-1">Data Sources</h3>
+              <div className="flex flex-col space-y-1 mt-2">
+                {sources.map((source, idx) => (
+                  <a key={idx} href={source.url} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-sm flex items-center">
+                    {source.name} <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Contributors */}
         <div className="bg-white rounded-3xl p-10 shadow-xl">
           <div className="flex items-center mb-8">
             <Users className="w-6 h-6 mr-3 text-blue-600" />
-            <h2 className="text-2xl font-bold">Project Credits / Contributions</h2>
+            <h2 className="text-2xl font-bold">Project Team</h2>
           </div>
-
           <div className="space-y-6">
             {team.map((member, index) => (
               <div key={index} className="flex flex-col md:flex-row md:justify-between md:items-center border-b border-slate-100 pb-4 last:border-0 space-y-2 md:space-y-0">
@@ -167,7 +174,7 @@ const App = () => {
       </section>
 
       <footer className="text-center py-8 text-slate-400 text-sm">
-        Built with AI for Homework: Group Project — 2026
+        Built with AI for School Project — 2026
       </footer>
     </div>
   );

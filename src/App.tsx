@@ -77,8 +77,10 @@ const App = () => {
       <header className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-24 px-8">
         <div className="max-w-6xl mx-auto text-center animate-fade-in">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
-            <Droplet className="w-4 h-4 mr-2 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-widest">Global Environmental Report</span>
+            <span className="text-xs font-bold uppercase tracking-widest flex items-center">
+              <Droplet className="w-4 h-4 mr-2 animate-pulse" />
+              Global Environmental Report
+            </span>
           </div>
           <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter">Plastic Pollution</h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed opacity-90">
@@ -91,7 +93,7 @@ const App = () => {
       <section className="max-w-6xl mx-auto px-8 -mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statistics.map((stat, index) => (
-            <div key={index} 
+            <div key={index}
                  className="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 transform hover:-translate-y-2 transition-all duration-300 animate-fade-in"
                  style={{ animationDelay: `${index * 150}ms` }}>
               <stat.icon className={`w-10 h-10 mb-4 ${stat.color}`} />
@@ -105,7 +107,6 @@ const App = () => {
       {/* Growth Chart & Intro Text */}
       <section className="max-w-6xl mx-auto px-8 py-16 animate-fade-in">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100">
-          
           <div className="lg:col-span-2">
             <h2 className="text-3xl font-black mb-6 flex items-center">
               <Info className="w-8 h-8 mr-3 text-blue-600" />
@@ -116,7 +117,7 @@ const App = () => {
                 Since its large-scale introduction in the 1950s, plastic has transformed modern life. However, its durability—the very quality that made it revolutionary—is now its most dangerous trait.
               </p>
               <p>
-                Of the <strong>9.2 billion tons</strong> of plastic produced to date, an estimated <strong>6.3 billion tons</strong> have become waste. Shockingly, only <strong>9%</strong> of this has ever been recycled, while 12% was incinerated. 
+                Of the <strong>9.2 billion tons</strong> of plastic produced to date, an estimated <strong>6.3 billion tons</strong> have become waste. Shockingly, only <strong>9%</strong> of this has ever been recycled.
               </p>
               <p>
                 The remaining 79% has accumulated in landfills or the natural environment, where it will persist for centuries.
@@ -165,22 +166,6 @@ const App = () => {
         </div>
       </section>
 
-      {/* Crisis Deep Dive Text */}
-      <section className="max-w-4xl mx-auto px-8 py-16 text-center animate-fade-in">
-        <div className="inline-block p-2 bg-red-50 text-red-600 rounded-lg mb-4 text-sm font-bold uppercase tracking-wider">
-          Critical Insight
-        </div>
-        <h2 className="text-3xl font-black mb-8 italic">"By 2050, there could be more plastic than fish in the ocean by weight."</h2>
-        <div className="prose prose-lg mx-auto text-slate-600 space-y-6">
-          <p>
-            The crisis is fueled by <strong>microplastics</strong>—particles smaller than 5mm. They have been found in the deepest ocean trenches and on the highest mountain peaks. Because they never truly "disappear," they become permanent fixtures in our water and air.
-          </p>
-          <p>
-            Every minute, the equivalent of <strong>one garbage truck</strong> of plastic is dumped into our oceans. This is not just an aesthetic issue; it affects the planet's ability to regulate climate, as plastic reduces the efficiency of carbon-sequestering plankton.
-          </p>
-        </div>
-      </section>
-
       {/* Solutions Section */}
       <section className="max-w-6xl mx-auto px-8 py-16">
         <div className="bg-slate-900 text-white rounded-[3rem] p-10 md:p-16 shadow-2xl overflow-hidden relative">
@@ -213,7 +198,7 @@ const App = () => {
             </h3>
             <div className="space-y-4">
               {sources.map((source, idx) => (
-                <a key={idx} href={source.url} target="_blank" rel="noreferrer" 
+                <a key={idx} href={source.url} target="_blank" rel="noreferrer"
                    className="flex items-center text-slate-500 hover:text-blue-600 transition-colors group text-sm font-medium">
                   <span className="truncate">{source.name}</span>
                   <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -223,45 +208,43 @@ const App = () => {
           </div>
 
           {/* Team */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
-          <div className="flex items-center mb-8">
-            <Users className="w-6 h-6 mr-3 text-blue-600" />
-            <h2 className="text-2xl font-bold tracking-tight">Project Contributors</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8"> {/* Поменял на 2 колонки, так как вас двое */}
-            {team.map((member, index) => (
-              <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group">
-                {/* Аватарка-ссылка */}
-                <a
-                  href={`https://github.com/${member.github}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="relative shrink-0"
-                >
-                  <img
-                    src={`https://github.com/${member.github}.png`}
-                    alt={member.name}
-                    className="w-16 h-16 rounded-full border-2 border-blue-100 group-hover:border-blue-500 transition-all shadow-sm object-cover"
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-md border border-slate-100">
-                    <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-600" />
+          <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+            <div className="flex items-center mb-8">
+              <Users className="w-6 h-6 mr-3 text-blue-600" />
+              <h2 className="text-2xl font-bold tracking-tight">Project Contributors</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {team.map((member, index) => (
+                <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group">
+                  <a
+                    href={`https://github.com/${member.github}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="relative shrink-0"
+                  >
+                    <img
+                      src={`https://github.com/${member.github}.png`}
+                      alt={member.name}
+                      className="w-16 h-16 rounded-full border-2 border-blue-100 group-hover:border-blue-500 transition-all shadow-sm object-cover"
+                    />
+                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-md border border-slate-100">
+                      <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-600" />
+                    </div>
+                  </a>
+                  <div>
+                    <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                      {member.name}
+                    </h4>
+                    <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mt-0.5 mb-1">
+                      {member.role}
+                    </p>
+                    <p className="text-[11px] text-slate-500 italic leading-snug max-w-[200px]">
+                      {member.task}
+                    </p>
                   </div>
-                </a>
-
-                {/* Инфо о мембере */}
-                <div>
-                  <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                    {member.name}
-                  </h4>
-                  <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mt-0.5 mb-1">
-                    {member.role}
-                  </p>
-                  <p className="text-[11px] text-slate-500 italic leading-snug max-w-[200px]">
-                    {member.task}
-                  </p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>

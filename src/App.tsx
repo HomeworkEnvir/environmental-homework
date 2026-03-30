@@ -1,7 +1,19 @@
-import React from 'react';
-import { Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink, Info, Sun, Moon } from 'lucide-react';
 
 const App = () => {
+  // Логика переключения темы
+  const [isDark, setIsDark] = useState(false);
+
+  const toggleTheme = () => {
+    setIsDark(!isDark);
+    if (!isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
   const team = [
     { name: "Artem Peresada",
         role: "Backend / Logic / Design",
@@ -62,7 +74,17 @@ const App = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 text-slate-900 font-sans selection:bg-blue-200">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-200 transition-colors duration-500">
+
+      {/* Кнопка смены темы */}
+      <button
+        onClick={toggleTheme}
+        className="fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-xl hover:scale-110 active:scale-95 transition-all"
+        title="Toggle Theme"
+      >
+        {isDark ? <Sun className="w-6 h-6 text-yellow-400" /> : <Moon className="w-6 h-6 text-blue-600" />}
+      </button>
+
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
@@ -74,7 +96,7 @@ const App = () => {
       `}</style>
 
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-24 px-8">
+      <header className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-900 dark:to-slate-900 text-white py-24 px-8">
         <div className="max-w-6xl mx-auto text-center animate-fade-in">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
             <span className="text-xs font-bold uppercase tracking-widest flex items-center">
@@ -94,11 +116,11 @@ const App = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statistics.map((stat, index) => (
             <div key={index}
-                 className="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 transform hover:-translate-y-2 transition-all duration-300 animate-fade-in"
+                 className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 transform hover:-translate-y-2 transition-all duration-300 animate-fade-in"
                  style={{ animationDelay: `${index * 150}ms` }}>
               <stat.icon className={`w-10 h-10 mb-4 ${stat.color}`} />
-              <div className="text-4xl font-black mb-1 tracking-tight">{stat.value}</div>
-              <div className="text-sm text-slate-500 font-semibold uppercase tracking-wider">{stat.label}</div>
+              <div className="text-4xl font-black mb-1 tracking-tight dark:text-white">{stat.value}</div>
+              <div className="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -106,13 +128,13 @@ const App = () => {
 
       {/* Growth Chart & Intro Text */}
       <section className="max-w-6xl mx-auto px-8 py-16 animate-fade-in">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700">
           <div className="lg:col-span-2">
-            <h2 className="text-3xl font-black mb-6 flex items-center">
-              <Info className="w-8 h-8 mr-3 text-blue-600" />
+            <h2 className="text-3xl font-black mb-6 flex items-center dark:text-white">
+              <Info className="w-8 h-8 mr-3 text-blue-600 dark:text-blue-400" />
               The Plastic Legacy
             </h2>
-            <div className="space-y-4 text-slate-600 leading-relaxed">
+            <div className="space-y-4 text-slate-600 dark:text-slate-300 leading-relaxed">
               <p>
                 Since its large-scale introduction in the 1950s, plastic has transformed modern life. However, its durability—the very quality that made it revolutionary—is now its most dangerous trait.
               </p>
@@ -129,7 +151,7 @@ const App = () => {
             <div className="flex justify-between items-end mb-8">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Global Production (Million Tons/Year)</span>
             </div>
-            <div className="flex items-end justify-between gap-3 h-64 border-b-2 border-slate-100 pb-2">
+            <div className="flex items-end justify-between gap-3 h-64 border-b-2 border-slate-100 dark:border-slate-700 pb-2">
               {growthData.map((d, i) => (
                 <div key={i} className="flex flex-col items-center w-full group">
                   <div className={`w-full max-w-[60px] bg-gradient-to-t from-blue-700 to-cyan-400 rounded-t-xl shadow-lg ${d.height} transition-all duration-500 group-hover:brightness-110 relative`}>
@@ -137,7 +159,7 @@ const App = () => {
                       {d.value}
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-slate-500 mt-6">{d.year}</span>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-6">{d.year}</span>
                 </div>
               ))}
             </div>
@@ -148,19 +170,19 @@ const App = () => {
       {/* Impact Section */}
       <section className="max-w-6xl mx-auto px-8 py-16">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl font-black mb-6 tracking-tight">Systemic Impact</h2>
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <h2 className="text-4xl font-black mb-6 tracking-tight dark:text-white">Systemic Impact</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
             Plastic pollution is not just a litter problem; it is a complex threat that disrupts biological processes and alters entire ecosystems.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {impacts.map((impact, index) => (
-            <div key={index} className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:shadow-2xl transition-all animate-fade-in group">
-              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <impact.icon className="w-8 h-8 text-blue-600" />
+            <div key={index} className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 hover:shadow-2xl transition-all animate-fade-in group">
+              <div className="w-16 h-16 bg-blue-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <impact.icon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 tracking-tight">{impact.title}</h3>
-              <p className="text-slate-600 leading-relaxed">{impact.description}</p>
+              <h3 className="text-2xl font-bold mb-4 tracking-tight dark:text-white">{impact.title}</h3>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{impact.description}</p>
             </div>
           ))}
         </div>
@@ -168,7 +190,7 @@ const App = () => {
 
       {/* Solutions Section */}
       <section className="max-w-6xl mx-auto px-8 py-16">
-        <div className="bg-slate-900 text-white rounded-[3rem] p-10 md:p-16 shadow-2xl overflow-hidden relative">
+        <div className="bg-slate-900 dark:bg-black text-white rounded-[3rem] p-10 md:p-16 shadow-2xl overflow-hidden relative border dark:border-slate-800">
           <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
           <div className="relative z-10">
             <div className="flex items-center mb-10">
@@ -188,18 +210,18 @@ const App = () => {
       </section>
 
       {/* Data Sources & Team */}
-      <section className="max-w-6xl mx-auto px-8 py-16 border-t border-slate-200">
+      <section className="max-w-6xl mx-auto px-8 py-16 border-t border-slate-200 dark:border-slate-800">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Sources */}
           <div className="lg:col-span-1">
-            <h3 className="text-xl font-black mb-6 flex items-center uppercase tracking-tighter">
-              <Trash2 className="w-5 h-5 mr-2 text-blue-600" />
+            <h3 className="text-xl font-black mb-6 flex items-center uppercase tracking-tighter dark:text-white">
+              <Trash2 className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
               Evidence Base
             </h3>
             <div className="space-y-4">
               {sources.map((source, idx) => (
                 <a key={idx} href={source.url} target="_blank" rel="noreferrer"
-                   className="flex items-center text-slate-500 hover:text-blue-600 transition-colors group text-sm font-medium">
+                   className="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group text-sm font-medium">
                   <span className="truncate">{source.name}</span>
                   <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </a>
@@ -208,14 +230,14 @@ const App = () => {
           </div>
 
           {/* Team */}
-          <div className="lg:col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
             <div className="flex items-center mb-8">
-              <Users className="w-6 h-6 mr-3 text-blue-600" />
-              <h2 className="text-2xl font-bold tracking-tight">Project Contributors</h2>
+              <Users className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-400" />
+              <h2 className="text-2xl font-bold tracking-tight dark:text-white">Project Contributors</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {team.map((member, index) => (
-                <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors group">
+                <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
                   <a
                     href={`https://github.com/${member.github}`}
                     target="_blank"
@@ -225,20 +247,20 @@ const App = () => {
                     <img
                       src={`https://github.com/${member.github}.png`}
                       alt={member.name}
-                      className="w-16 h-16 rounded-full border-2 border-blue-100 group-hover:border-blue-500 transition-all shadow-sm object-cover"
+                      className="w-16 h-16 rounded-full border-2 border-blue-100 dark:border-slate-700 group-hover:border-blue-500 transition-all shadow-sm object-cover"
                     />
-                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-md border border-slate-100">
+                    <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 rounded-full p-1 shadow-md border border-slate-100 dark:border-slate-700">
                       <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-blue-600" />
                     </div>
                   </a>
                   <div>
-                    <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    <h4 className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {member.name}
                     </h4>
-                    <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mt-0.5 mb-1">
+                    <p className="text-[10px] text-blue-600 dark:text-blue-400 font-black uppercase tracking-widest mt-0.5 mb-1">
                       {member.role}
                     </p>
-                    <p className="text-[11px] text-slate-500 italic leading-snug max-w-[200px]">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 italic leading-snug max-w-[200px]">
                       {member.task}
                     </p>
                   </div>
@@ -249,7 +271,7 @@ const App = () => {
         </div>
       </section>
 
-      <footer className="text-center py-12 text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">
+      <footer className="text-center py-12 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">
         Scientific Visualization — Group Project 2026
       </footer>
     </div>

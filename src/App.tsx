@@ -34,7 +34,7 @@ const App: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('https://backend-plastic-pollution.onrender.com/plastic');
+        const response = await fetch('https://backend-plastic-pollution.onrender.com/stats/plastic');
         if (!response.ok) throw new Error('Failed to fetch environmental data');
         
         const data: PlasticData[] = await response.json();

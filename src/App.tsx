@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink, Info, Sun, Moon } from 'lucide-react';
 
 const App = () => {
-  // Логика переключения темы
+  const [statsData, setStatsData] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(false);
 
   const toggleTheme = () => {
@@ -14,31 +16,65 @@ const App = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [cardsRes, plasticRes] = await Promise.all([
+          fetch('http://127.0.0.1:8000/stats/cards'),
+          fetch('http://127.0.0.1:8000/stats/plastic')
+        ]);
+
+        const cards = await cardsRes.json();
+        const plastic = await plasticRes.json();
+
+        setStatsData(cards);
+        setHistoryData(plastic);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const team = [
-    { name: "Artem Peresada",
-        role: "Backend / Logic / Design",
+    {
+        name: "Artem Peresada",
+        role: "Backend / Frontend / Logic / Design",
         task: "Integration of API data, pollution statistics and design",
-        github: "REvDl"},
-    { name: "Mihailo Petrović",
-        role: "DevOps / Deploy / Design",
+        github: "REvDl"
+    },
+    {
+        name: "Mihailo Petrović",
+        role: "DevOps / Deploy / Design / Maintenance",
         github: "VargKernel",
-        task: "Site deployment, maintenance and design" }
+        task: "Site deployment, maintenance and design"
+    }
   ];
 
   const statistics = [
-    { icon: TrendingUp, value: "460M", label: "Tons Produced Annually", color: "text-red-600" },
-    { icon: Droplet, value: "11M", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
-    { icon: Fish, value: "1M+", label: "Marine Animals Affected", color: "text-cyan-600" },
-    { icon: Globe, value: "171T", label: "Plastic Particles in Ocean", color: "text-emerald-600" }
+    { icon: TrendingUp, value: statsData ? `${statsData.tons_produced_annually_mton}M` : "---", label: "Tons Produced Annually", color: "text-red-600" },
+    { icon: Droplet, value: statsData ? `${statsData.tons_enter_oceans_mton}M` : "---", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
+    { icon: Fish, value: statsData ? `${statsData.marine_animals_affected_millions}M+` : "---", label: "Marine Animals Affected", color: "text-cyan-600" },
+    { icon: Globe, value: statsData ? `${statsData.ocean_plastic_particles_trillions}T` : "---", label: "Plastic Particles in Ocean", color: "text-emerald-600" }
   ];
 
-  const growthData = [
-    { year: '1950', value: '2M', height: 'h-4' },
-    { year: '1970', value: '35M', height: 'h-12' },
-    { year: '1990', value: '120M', height: 'h-24' },
-    { year: '2010', value: '313M', height: 'h-48' },
-    { year: '2020', value: '460M', height: 'h-64' },
-  ];
+  const getGrowthData = () => {
+    if (!historyData || historyData.length === 0) return [];
+    const maxVal = Math.max(...historyData.map(d => d.OBS_VALUE));
+    const yearsToShow = [1990, 1995, 2000, 2005, 2010, 2015, 2019];
+
+    return historyData
+      .filter(d => yearsToShow.includes(d.TIME_PERIOD))
+      .map(d => ({
+        year: d.TIME_PERIOD.toString(),
+        value: `${d.OBS_VALUE}M`,
+        height: `${(d.OBS_VALUE / maxVal) * 100}%`
+      }));
+  };
+
+  const growthData = getGrowthData();
 
   const impacts = [
     {
@@ -76,7 +112,6 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-200 transition-colors duration-500">
 
-      {/* Кнопка смены темы */}
       <button
         onClick={toggleTheme}
         className="fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-xl hover:scale-110 active:scale-95 transition-all"
@@ -119,14 +154,14 @@ const App = () => {
                  className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 transform hover:-translate-y-2 transition-all duration-300 animate-fade-in"
                  style={{ animationDelay: `${index * 150}ms` }}>
               <stat.icon className={`w-10 h-10 mb-4 ${stat.color}`} />
-              <div className="text-4xl font-black mb-1 tracking-tight dark:text-white">{stat.value}</div>
+              <div className="text-4xl font-black mb-1 tracking-tight dark:text-white">{loading ? '...' : stat.value}</div>
               <div className="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Growth Chart & Intro Text */}
+      {/* Growth Chart Section */}
       <section className="max-w-6xl mx-auto px-8 py-16 animate-fade-in">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700">
           <div className="lg:col-span-2">
@@ -135,15 +170,9 @@ const App = () => {
               The Plastic Legacy
             </h2>
             <div className="space-y-4 text-slate-600 dark:text-slate-300 leading-relaxed">
-              <p>
-                Since its large-scale introduction in the 1950s, plastic has transformed modern life. However, its durability—the very quality that made it revolutionary—is now its most dangerous trait.
-              </p>
-              <p>
-                Of the <strong>9.2 billion tons</strong> of plastic produced to date, an estimated <strong>6.3 billion tons</strong> have become waste. Shockingly, only <strong>9%</strong> of this has ever been recycled.
-              </p>
-              <p>
-                The remaining 79% has accumulated in landfills or the natural environment, where it will persist for centuries.
-              </p>
+              <p>Since its large-scale introduction in the 1990s, plastic has transformed modern life. However, its durability is now its most dangerous trait.</p>
+              <p>Of the <strong>9.2 billion tons</strong> produced to date, an estimated <strong>6.3 billion tons</strong> have become waste. Shockingly, only <strong>9%</strong> has ever been recycled.</p>
+              <p>The remaining 79% has accumulated in landfills or the natural environment, where it will persist for centuries.</p>
             </div>
           </div>
 
@@ -151,17 +180,24 @@ const App = () => {
             <div className="flex justify-between items-end mb-8">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Global Production (Million Tons/Year)</span>
             </div>
-            <div className="flex items-end justify-between gap-3 h-64 border-b-2 border-slate-100 dark:border-slate-700 pb-2">
-              {growthData.map((d, i) => (
-                <div key={i} className="flex flex-col items-center w-full group">
-                  <div className={`w-full max-w-[60px] bg-gradient-to-t from-blue-700 to-cyan-400 rounded-t-xl shadow-lg ${d.height} transition-all duration-500 group-hover:brightness-110 relative`}>
-                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {d.value}
+            <div className="flex items-end justify-between gap-3 h-64 border-b-2 border-slate-100 dark:border-slate-700 pb-2 relative">
+              {loading ? (
+                <div className="absolute inset-0 flex items-center justify-center text-slate-400 animate-pulse">Loading data...</div>
+              ) : (
+                growthData.map((d, i) => (
+                  <div key={i} className="flex flex-col items-center justify-end h-full w-full group">
+                    <div
+                      style={{ height: d.height, minHeight: '4px' }}
+                      className="w-full max-w-[55px] bg-gradient-to-t from-blue-700 to-cyan-400 rounded-t-xl shadow-lg transition-all duration-700 group-hover:brightness-110 relative"
+                    >
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                        {d.value}
+                      </div>
                     </div>
+                    <span className="text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 mt-6 text-center">{d.year}</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-6">{d.year}</span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -229,7 +265,7 @@ const App = () => {
             </div>
           </div>
 
-          {/* Team */}
+          {/* Team Section (Corrected Display) */}
           <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
             <div className="flex items-center mb-8">
               <Users className="w-6 h-6 mr-3 text-blue-600 dark:text-blue-400" />

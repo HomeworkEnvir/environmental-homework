@@ -34,7 +34,9 @@ const App: React.FC = () => {
         const data: PlasticData[] = await response.json();
         
         if (Array.isArray(data) && data.length > 0) {
-          const sorted = [...data].sort((a, b) => parseInt(a.TIME_PERIOD) - parseInt(b.TIME_PERIOD));
+          // ФИЛЬТР: Только данные с 1990 года
+          const filtered = data.filter(item => parseInt(item.TIME_PERIOD) >= 1990);
+          const sorted = [...filtered].sort((a, b) => parseInt(a.TIME_PERIOD) - parseInt(b.TIME_PERIOD));
 
           const grouped: { [key: string]: number } = {};
           sorted.forEach(item => {
@@ -61,13 +63,13 @@ const App: React.FC = () => {
 
           const formattedPeriods = periods.map(year => ({
             year: `${year}s`,
-            value: `${Math.round(grouped[year])}M tons`,
+            value: `${Math.round(grouped[year])}M`,
             percentHeight: getPercentHeight(grouped[year])
           }));
 
           const lastYearCol = {
             year: latestEntry.TIME_PERIOD,
-            value: `${Math.round(latestValue)}M tons`,
+            value: `${Math.round(latestValue)}M`,
             percentHeight: getPercentHeight(latestValue),
             isLastYear: true
           };
@@ -161,12 +163,11 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* ГРАФИК + ТЕКСТ (ОБЪЕДИНЕННАЯ СЕКЦИЯ) */}
+      {/* СЕКЦИЯ С ГРАФИКОМ */}
       <section className="max-w-6xl mx-auto px-8 py-16 animate-fade-in" style={{ animationDelay: '600ms' }}>
         <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* ТЕКСТ СЛЕВА (Из старой версии + улучшения) */}
             <div className="lg:col-span-5 space-y-6">
               <h2 className="text-3xl font-black flex items-center dark:text-white">
                 <Info className="w-8 h-8 mr-3 text-blue-600 dark:text-blue-400" />
@@ -174,22 +175,21 @@ const App: React.FC = () => {
               </h2>
               <div className="space-y-4 text-slate-600 dark:text-slate-300 leading-relaxed">
                 <p>
-                  Since the 1950s, plastic has transformed modern life. However, its durability—the very quality that made it revolutionary—is now its most dangerous trait.
+                  Since 1990, the acceleration of plastic production has reached unprecedented levels. This data represents the mass of plastic waste generated and managed globally.
                 </p>
                 <p>
                   Of the <strong>9.2 billion tons</strong> produced to date, an estimated <strong>6.3 billion tons</strong> have become waste. Shockingly, only <strong>9%</strong> has ever been recycled.
                 </p>
-                <p className="text-sm italic border-l-4 border-blue-500 pl-4 py-1 bg-blue-50/50 dark:bg-blue-900/10">
-                  "The growth is not just linear; it is a global emergency reflected in the live OECD data records."
+                <p className="text-sm italic border-l-4 border-blue-500 pl-4 py-1 bg-blue-50/50 dark:bg-blue-900/10 font-medium">
+                  "Hover over the bars to see the exact tonnage for each period."
                 </p>
               </div>
             </div>
 
-            {/* ГРАФИК СПРАВА (Динамический из новой версии) */}
             <div className="lg:col-span-7 relative">
               <div className="flex justify-between items-end mb-8">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
-                   <TrendingUp className="w-4 h-4 mr-2" /> Global waste (Million Tons/Year)
+                   <TrendingUp className="w-4 h-4 mr-2" /> Waste growth from 1990 (Millions)
                 </span>
               </div>
               
@@ -207,20 +207,20 @@ const App: React.FC = () => {
                       {realGrowthData.map((d, i) => (
                         <div key={i} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                           
-                          {/* TOOLTIP */}
-                          <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 z-50 shadow-xl pointer-events-none">
-                            {d.value}
-                            <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 dark:bg-white rotate-45"></div>
-                          </div>
-
                           <div 
-                            className={`w-full max-w-[50px] rounded-t-lg shadow-md transition-all duration-1000 ease-out animate-grow hover:brightness-110 cursor-help ${
+                            className={`w-full max-w-[55px] rounded-t-lg shadow-md transition-all duration-1000 ease-out animate-grow hover:brightness-110 cursor-help flex flex-col justify-end items-center relative overflow-hidden ${
                               d.isLastYear 
                                 ? 'bg-gradient-to-t from-emerald-600 to-teal-400' 
                                 : 'bg-gradient-to-t from-blue-700 to-cyan-400'
                             }`}
                             style={{ height: `${d.percentHeight}%`, minHeight: '4px' }}
-                          />
+                          >
+                             {/* КАРТОЧКА С ЦИФРОЙ (ВНУТРИ СТОЛБЦА СНИЗУ) */}
+                             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-slate-900 dark:text-white text-[9px] font-black py-1 px-2 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 shadow-lg">
+                              {d.value}
+                            </div>
+                          </div>
+                          
                           <span className={`text-[10px] font-bold mt-4 ${
                             d.isLastYear ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'
                           }`}>
@@ -237,6 +237,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* ОСТАЛЬНЫЕ СЕКЦИИ БЕЗ ИЗМЕНЕНИЙ */}
       <section className="max-w-6xl mx-auto px-8 py-16">
         <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
           <h2 className="text-4xl font-black mb-6 tracking-tight dark:text-white">Systemic Impact</h2>

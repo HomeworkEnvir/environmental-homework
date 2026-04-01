@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink, Sun, Moon, Loader2 } from 'lucide-react';
+import { TrendingUp, Droplet, Fish, Globe, Sun, Moon, Loader2, Recycle, ExternalLink, Users } from 'lucide-react';
 
 interface PlasticData {
   TIME_PERIOD: string;
@@ -21,11 +21,7 @@ const App: React.FC = () => {
 
   const toggleTheme = () => {
     setIsDark(!isDark);
-    if (!isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle('dark');
   };
 
   useEffect(() => {
@@ -33,14 +29,15 @@ const App: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await fetch('https://backend-plastic-pollution.onrender.com/stats/plastic');
-        if (!response.ok) throw new Error('Failed to fetch environmental data');
+        if (!response.ok) throw new Error('Ошибка загрузки данных');
         
         const data: PlasticData[] = await response.json();
-        
+        console.log("Raw Data from API:", data); // ПРОВЕРЬТЕ КОНСОЛЬ (F12)
+
         if (Array.isArray(data) && data.length > 0) {
           const sorted = [...data].sort((a, b) => parseInt(a.TIME_PERIOD) - parseInt(b.TIME_PERIOD));
 
-          // 1. Группировка по 5 лет
+          // 1. Группировка
           const grouped: { [key: string]: number } = {};
           sorted.forEach(item => {
             const year = parseInt(item.TIME_PERIOD);
@@ -50,242 +47,110 @@ const App: React.FC = () => {
             grouped[periodStart] += val;
           });
 
-          // 2. Находим данные за самый последний год
           const latestEntry = sorted[sorted.length - 1];
-          const latestYear = latestEntry.TIME_PERIOD;
           const latestValue = parseFloat(latestEntry.OBS_VALUE.toString()) || 0;
-
           const periods = Object.keys(grouped).sort();
+          const allValues = [...Object.values(grouped), latestValue];
           
-          // Собираем все значения для поиска min/max (периоды + последний год)
-          const allRawValues = [...Object.values(grouped), latestValue];
-          const maxValue = Math.max(...allRawValues);
-          const minValue = Math.min(...allRawValues);
-          const range = maxValue - minValue;
+          const maxVal = Math.max(...allValues);
+          const minVal = Math.min(...allValues);
+          const diff = maxVal - minVal;
 
-          // Функция для расчета высоты
-          const calculateHeight = (val: number) => {
-            if (range > 0) {
-              return 20 + ((val - minValue) / range) * 80;
-            }
-            return maxValue > 0 ? 100 : 50;
+          // ФУНКЦИЯ РАСЧЕТА С ЗАЩИТОЙ
+          const getPercentHeight = (current: number) => {
+            if (maxVal === 0) return 5; // Если везде нули, покажем маленькие "пни"
+            if (diff === 0) return 80;  // Если все равны, покажем высокие столбики
+            // Растягиваем: минимум 20%, максимум 100%
+            return 20 + ((current - minVal) / diff) * 80;
           };
 
-          // Форматируем пятилетки
           const formattedPeriods = periods.map(year => ({
             year: `${year}s`,
             value: `${Math.round(grouped[year])}M`,
-            percentHeight: calculateHeight(grouped[year])
+            percentHeight: getPercentHeight(grouped[year])
           }));
 
-          // Добавляем отдельный столбик последнего года
-          const lastYearColumn = {
-            year: latestYear,
+          const lastYearCol = {
+            year: latestEntry.TIME_PERIOD,
             value: `${Math.round(latestValue)}M`,
-            percentHeight: calculateHeight(latestValue),
+            percentHeight: getPercentHeight(latestValue),
             isLastYear: true
           };
 
-          setRealGrowthData([...formattedPeriods, lastYearColumn]);
+          setRealGrowthData([...formattedPeriods, lastYearCol]);
+        } else {
+          setError("Нет данных для отображения");
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        setError(err instanceof Error ? err.message : 'Неизвестная ошибка');
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  const team = [
-    { name: "Artem Peresada", role: "Backend / Logic / Design", task: "Integration of API data, pollution statistics and design", github: "REvDl"},
-    { name: "Mihailo Petrović", role: "DevOps / Deploy / Design", github: "VargKernel", task: "Site deployment, maintenance and design" }
-  ];
-
-  const statistics = [
-    { icon: TrendingUp, value: "460M", label: "Tons Produced Annually", color: "text-red-600" },
-    { icon: Droplet, value: "11M", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
-    { icon: Fish, value: "1M+", label: "Marine Animals Affected", color: "text-cyan-600" },
-    { icon: Globe, value: "171T", label: "Plastic Particles in Ocean", color: "text-emerald-600" }
-  ];
-
-  const impacts = [
-    { title: "Marine Life Threat", description: "Sea turtles, whales, and seabirds mistake plastic for food. Ingestion causes physical blockages and starvation.", icon: Fish },
-    { title: "Microplastic Cycle", description: "Microplastics absorb toxins and are eaten by plankton. These pollutants eventually reach humans through the food chain.", icon: Leaf },
-    { title: "Human Health", description: "Research has detected microplastics in human blood. Chemical additives like BPA are linked to endocrine issues.", icon: AlertCircle }
-  ];
-
-  const solutions = [
-    "Eliminate single-use items (straws, bags, cutlery)",
-    "Support circular economy and refill systems",
-    "Improve waste management and recycling technology",
-    "Global policy changes to limit virgin plastic production",
-    "Switch to sustainable materials like glass or bamboo",
-    "Participate in local cleanups and community education"
-  ];
-
-  const sources = [
-    { name: "OECD: Global Plastics Outlook", url: "https://www.oecd.org/en/topics/sub-issues/plastics.html" },
-    { name: "Geyer et al. (2017) 'Production of all plastics'", url: "https://www.science.org/doi/10.1126/sciadv.1700782" },
-    { name: "UNEP: Visualizing Plastic Pollution", url: "https://www.unep.org/intergovernmental-negotiating-committee-plastic-pollution" }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-200 transition-colors duration-500">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-sans transition-colors duration-500">
       
-      <button onClick={toggleTheme} className="fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-xl hover:scale-110 active:scale-95 transition-all">
-        {isDark ? <Sun className="w-6 h-6 text-yellow-400" /> : <Moon className="w-6 h-6 text-blue-600" />}
+      <button onClick={toggleTheme} className="fixed top-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700">
+        {isDark ? <Sun className="text-yellow-400" /> : <Moon className="text-blue-600" />}
       </button>
 
-      <style>{`
-        @keyframes growUp { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-        .animate-grow { transform-origin: bottom; animation: growUp 1.2s cubic-bezier(0.33, 1, 0.68, 1) forwards; }
-        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
-      `}</style>
-
-      <header className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-900 dark:to-slate-900 text-white py-24 px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
-            <span className="text-xs font-bold uppercase tracking-widest flex items-center">
-              <Droplet className="w-4 h-4 mr-2 animate-pulse" /> Live OECD Environmental Data
-            </span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter">Plastic Pollution</h1>
-        </div>
+      <header className="bg-gradient-to-r from-blue-700 to-cyan-500 py-20 px-8 text-center text-white">
+        <h1 className="text-5xl font-black mb-4">Plastic Pollution Report</h1>
+        <p className="opacity-80">Анализ глобальных отходов (OECD Data)</p>
       </header>
 
-      <section className="max-w-6xl mx-auto px-8 -mt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {statistics.map((stat, index) => (
-            <div key={index} className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 transform hover:-translate-y-2 transition-all duration-300">
-              <stat.icon className={`w-10 h-10 mb-4 ${stat.color}`} />
-              <div className="text-4xl font-black mb-1 dark:text-white">{stat.value}</div>
-              <div className="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-8 py-16">
-        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700">
-          <h2 className="text-3xl font-black mb-10 flex items-center dark:text-white">
-            <TrendingUp className="w-8 h-8 mr-3 text-blue-600" /> Global Waste Growth
+      <section className="max-w-6xl mx-auto px-8 py-12">
+        <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-10 shadow-2xl border border-slate-100 dark:border-slate-800">
+          <h2 className="text-2xl font-bold mb-12 flex items-center">
+            <TrendingUp className="mr-3 text-blue-500" /> Динамика роста отходов (млн тонн)
           </h2>
-          
-          <div className="relative">
+
+          {/* КОНТЕЙНЕР ГРАФИКА */}
+          <div className="h-[400px] flex items-end justify-between gap-4 border-b-4 border-slate-200 dark:border-slate-700 pb-2 overflow-hidden">
             {isLoading ? (
-              <div className="h-72 flex flex-col items-center justify-center text-slate-400">
-                <Loader2 className="w-10 h-10 animate-spin mb-4" />
-                <p className="uppercase tracking-widest text-xs font-bold">Syncing Records...</p>
+              <div className="w-full flex flex-col items-center justify-center text-slate-400">
+                <Loader2 className="animate-spin mb-2" />
+                <span>Загрузка...</span>
               </div>
             ) : error ? (
-              <div className="h-72 flex items-center justify-center text-red-500">{error}</div>
+              <div className="w-full text-center text-red-500">{error}</div>
             ) : (
-              <div className="overflow-x-auto custom-scrollbar pb-10">
-                <div className="flex items-end justify-between gap-4 min-w-full h-80 border-b-2 border-slate-100 dark:border-slate-700 px-6">
-                  {realGrowthData.map((d, i) => (
-                    <div key={i} className="flex flex-col items-center group relative flex-1 max-w-[100px]">
-                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-2xl">
-                        {d.value}
-                      </div>
-                      <div 
-                        className={`w-full rounded-t-xl shadow-lg transition-all duration-500 group-hover:brightness-125 animate-grow ${
-                          d.isLastYear 
-                            ? 'bg-gradient-to-t from-emerald-600 to-teal-400' 
-                            : 'bg-gradient-to-t from-blue-700 via-blue-500 to-cyan-400'
-                        }`}
-                        style={{ height: `${d.percentHeight}%` }}
-                      />
-                      <span className={`text-[11px] font-bold mt-6 transform group-hover:scale-110 transition-transform ${
-                        d.isLastYear ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'
-                      }`}>
-                        {d.year}
-                      </span>
-                    </div>
-                  ))}
+              realGrowthData.map((d, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center group relative h-full justify-end">
+                  {/* Тултип */}
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[11px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                    {d.value}
+                  </div>
+                  
+                  {/* СТОЛБИК */}
+                  <div 
+                    className={`w-full max-w-[70px] rounded-t-lg transition-all duration-1000 ease-out hover:scale-x-105 hover:brightness-110 ${
+                      d.isLastYear 
+                        ? 'bg-gradient-to-t from-emerald-600 to-teal-400' 
+                        : 'bg-gradient-to-t from-blue-600 to-cyan-400'
+                    }`}
+                    style={{ 
+                      height: `${d.percentHeight}%`,
+                      minHeight: '4px' // Чтобы даже 0 был виден полоской
+                    }}
+                  />
+                  
+                  {/* Подпись года */}
+                  <span className={`text-[10px] md:text-xs font-bold mt-4 ${d.isLastYear ? 'text-emerald-500' : 'text-slate-500'}`}>
+                    {d.year}
+                  </span>
                 </div>
-              </div>
+              ))
             )}
           </div>
         </div>
       </section>
 
-      {/* Секции воздействия и решений */}
-      <section className="max-w-6xl mx-auto px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {impacts.map((impact, index) => (
-            <div key={index} className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 hover:shadow-2xl transition-all group">
-              <div className="w-16 h-16 bg-blue-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <impact.icon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 dark:text-white">{impact.title}</h3>
-              <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">{impact.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-8 py-16">
-        <div className="bg-slate-900 text-white rounded-[3rem] p-10 md:p-16 shadow-2xl relative overflow-hidden border border-slate-800">
-          <div className="relative z-10">
-            <div className="flex items-center mb-10">
-              <Recycle className="w-10 h-10 mr-4 text-emerald-400" />
-              <h2 className="text-4xl font-black">Path to Recovery</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {solutions.map((solution, index) => (
-                <div key={index} className="flex items-start space-x-4 bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                  <span className="text-emerald-400 font-black text-xl">0{index + 1}</span>
-                  <p className="text-slate-300 font-medium leading-relaxed">{solution}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="max-w-6xl mx-auto px-8 py-16 border-t border-slate-200 dark:border-slate-800">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-1">
-            <h3 className="text-xl font-black mb-6 dark:text-white">Evidence Base</h3>
-            <div className="space-y-4">
-              {sources.map((source, idx) => (
-                <a key={idx} href={source.url} target="_blank" rel="noreferrer" className="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors group text-sm font-medium">
-                  <span className="truncate">{source.name}</span>
-                  <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-            <div className="flex items-center mb-8">
-              <Users className="w-6 h-6 mr-3 text-blue-600" />
-              <h2 className="text-2xl font-bold dark:text-white">Contributors</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {team.map((member, index) => (
-                <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                  <a href={`https://github.com/${member.github}`} target="_blank" rel="noreferrer" className="relative shrink-0">
-                    <img src={`https://github.com/${member.github}.png`} className="w-16 h-16 rounded-full border-2 border-blue-100 dark:border-slate-700 group-hover:border-blue-500 transition-all shadow-sm object-cover" alt={member.name} />
-                  </a>
-                  <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">{member.name}</h4>
-                    <p className="text-[9px] text-blue-600 font-black uppercase tracking-widest">{member.role}</p>
-                    <p className="text-[10px] text-slate-500 dark:text-slate-400 italic leading-tight">{member.task}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="text-center py-12 text-slate-400 text-xs font-bold uppercase tracking-[0.2em]">
-        Scientific Visualization — Group Project 2026
+      <footer className="text-center py-10 text-slate-500 text-xs font-bold tracking-widest uppercase">
+        © 2026 Environmental Visualization Project
       </footer>
     </div>
   );

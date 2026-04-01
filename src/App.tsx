@@ -10,6 +10,7 @@ interface FormattedData {
   year: string;
   value: string;
   percentHeight: number;
+  isLastYear?: boolean;
 }
 
 const App: React.FC = () => {
@@ -20,7 +21,11 @@ const App: React.FC = () => {
 
   const toggleTheme = () => {
     setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
+    if (!isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   };
 
   useEffect(() => {
@@ -45,34 +50,43 @@ const App: React.FC = () => {
             grouped[periodStart] += val;
           });
 
-          const years = Object.keys(grouped).sort();
-          const rawValues = years.map(y => grouped[y]);
+          // 2. Находим данные за самый последний год
+          const latestEntry = sorted[sorted.length - 1];
+          const latestYear = latestEntry.TIME_PERIOD;
+          const latestValue = parseFloat(latestEntry.OBS_VALUE.toString()) || 0;
+
+          const periods = Object.keys(grouped).sort();
           
-          // 2. ЛОГИКА РОСТА: Находим границы данных
-          const maxValue = Math.max(...rawValues);
-          const minValue = Math.min(...rawValues);
+          // Собираем все значения для поиска min/max (периоды + последний год)
+          const allRawValues = [...Object.values(grouped), latestValue];
+          const maxValue = Math.max(...allRawValues);
+          const minValue = Math.min(...allRawValues);
           const range = maxValue - minValue;
 
-          const formatted = years.map(year => {
-            const val = grouped[year];
-            
-            // Если разница между годами маленькая, мы искусственно "растягиваем" её
-            // Чтобы самый маленький столбик был 15%, а самый высокий 100%
-            let height = 50; // по умолчанию, если данных нет
+          // Функция для расчета высоты
+          const calculateHeight = (val: number) => {
             if (range > 0) {
-              height = 15 + ((val - minValue) / range) * 85;
-            } else if (maxValue > 0) {
-              height = 100; // если все значения одинаковые
+              return 20 + ((val - minValue) / range) * 80;
             }
+            return maxValue > 0 ? 100 : 50;
+          };
 
-            return {
-              year: `${year}s`,
-              value: `${Math.round(val)}M`,
-              percentHeight: height
-            };
-          });
-          
-          setRealGrowthData(formatted);
+          // Форматируем пятилетки
+          const formattedPeriods = periods.map(year => ({
+            year: `${year}s`,
+            value: `${Math.round(grouped[year])}M`,
+            percentHeight: calculateHeight(grouped[year])
+          }));
+
+          // Добавляем отдельный столбик последнего года
+          const lastYearColumn = {
+            year: latestYear,
+            value: `${Math.round(latestValue)}M`,
+            percentHeight: calculateHeight(latestValue),
+            isLastYear: true
+          };
+
+          setRealGrowthData([...formattedPeriods, lastYearColumn]);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -126,7 +140,7 @@ const App: React.FC = () => {
 
       <style>{`
         @keyframes growUp { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-        .animate-grow { transform-origin: bottom; animation: growUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-grow { transform-origin: bottom; animation: growUp 1.2s cubic-bezier(0.33, 1, 0.68, 1) forwards; }
         .custom-scrollbar::-webkit-scrollbar { height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
@@ -155,7 +169,6 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* ГРАФИК */}
       <section className="max-w-6xl mx-auto px-8 py-16">
         <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700">
           <h2 className="text-3xl font-black mb-10 flex items-center dark:text-white">
@@ -172,21 +185,23 @@ const App: React.FC = () => {
               <div className="h-72 flex items-center justify-center text-red-500">{error}</div>
             ) : (
               <div className="overflow-x-auto custom-scrollbar pb-10">
-                <div className="flex items-end justify-between gap-6 min-w-full h-80 border-b-2 border-slate-100 dark:border-slate-700 px-6">
+                <div className="flex items-end justify-between gap-4 min-w-full h-80 border-b-2 border-slate-100 dark:border-slate-700 px-6">
                   {realGrowthData.map((d, i) => (
                     <div key={i} className="flex flex-col items-center group relative flex-1 max-w-[100px]">
-                      {/* Тултип с числом */}
                       <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-2xl">
                         {d.value}
                       </div>
-                      
-                      {/* СТОЛБИК */}
                       <div 
-                        className="w-full bg-gradient-to-t from-blue-700 via-blue-500 to-cyan-400 rounded-t-xl shadow-lg transition-all duration-500 group-hover:brightness-125 animate-grow"
+                        className={`w-full rounded-t-xl shadow-lg transition-all duration-500 group-hover:brightness-125 animate-grow ${
+                          d.isLastYear 
+                            ? 'bg-gradient-to-t from-emerald-600 to-teal-400' 
+                            : 'bg-gradient-to-t from-blue-700 via-blue-500 to-cyan-400'
+                        }`}
                         style={{ height: `${d.percentHeight}%` }}
                       />
-                      
-                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-6 transform group-hover:scale-110 transition-transform">
+                      <span className={`text-[11px] font-bold mt-6 transform group-hover:scale-110 transition-transform ${
+                        d.isLastYear ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'
+                      }`}>
                         {d.year}
                       </span>
                     </div>
@@ -198,6 +213,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* Секции воздействия и решений */}
       <section className="max-w-6xl mx-auto px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {impacts.map((impact, index) => (
@@ -237,9 +253,9 @@ const App: React.FC = () => {
             <h3 className="text-xl font-black mb-6 dark:text-white">Evidence Base</h3>
             <div className="space-y-4">
               {sources.map((source, idx) => (
-                <a key={idx} href={source.url} target=\"_blank\" rel=\"noreferrer\" className=\"flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors group text-sm font-medium\">
-                  <span className=\"truncate\">{source.name}</span>
-                  <ExternalLink className=\"w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity\" />
+                <a key={idx} href={source.url} target="_blank" rel="noreferrer" className="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors group text-sm font-medium">
+                  <span className="truncate">{source.name}</span>
+                  <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </a>
               ))}
             </div>
@@ -253,10 +269,13 @@ const App: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {team.map((member, index) => (
                 <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
-                  <img src={`https://github.com/${member.github}.png`} className="w-16 h-16 rounded-full border-2 border-blue-100 dark:border-slate-700" alt={member.name} />
+                  <a href={`https://github.com/${member.github}`} target="_blank" rel="noreferrer" className="relative shrink-0">
+                    <img src={`https://github.com/${member.github}.png`} className="w-16 h-16 rounded-full border-2 border-blue-100 dark:border-slate-700 group-hover:border-blue-500 transition-all shadow-sm object-cover" alt={member.name} />
+                  </a>
                   <div>
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">{member.name}</h4>
                     <p className="text-[9px] text-blue-600 font-black uppercase tracking-widest">{member.role}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 italic leading-tight">{member.task}</p>
                   </div>
                 </div>
               ))}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Leaf, AlertCircle, Droplet, Fish, Recycle, TrendingUp, Globe, ExternalLink, Sun, Moon, Loader2, Quote, ArrowRight, Info } from 'lucide-react';
+import { Users, Leaf, AlertCircle, Droplet, Fish, Trash2, Recycle, TrendingUp, Globe, ExternalLink, Sun, Moon, Loader2 } from 'lucide-react';
 
 interface PlasticData {
   TIME_PERIOD: string;
@@ -61,13 +61,13 @@ const App: React.FC = () => {
 
           const formattedPeriods = periods.map(year => ({
             year: `${year}s`,
-            value: `${Math.round(grouped[year])}M`,
+            value: `${Math.round(grouped[year])}M tons`,
             percentHeight: getPercentHeight(grouped[year])
           }));
 
           const lastYearCol = {
             year: latestEntry.TIME_PERIOD,
-            value: `${Math.round(latestValue)}M`,
+            value: `${Math.round(latestValue)}M tons`,
             percentHeight: getPercentHeight(latestValue),
             isLastYear: true
           };
@@ -89,10 +89,10 @@ const App: React.FC = () => {
   ];
 
   const statistics = [
-    { icon: TrendingUp, value: "460M", label: "Produced Annually", color: "text-red-600" },
-    { icon: Droplet, value: "11M", label: "Oceans Entry/Year", color: "text-blue-600" },
-    { icon: Fish, value: "1M+", label: "Animals Affected", color: "text-cyan-600" },
-    { icon: Globe, value: "171T", label: "Ocean Particles", color: "text-emerald-600" }
+    { icon: TrendingUp, value: "460M", label: "Tons Produced Annually", color: "text-red-600" },
+    { icon: Droplet, value: "11M", label: "Tons Enter Oceans/Year", color: "text-blue-600" },
+    { icon: Fish, value: "1M+", label: "Marine Animals Affected", color: "text-cyan-600" },
+    { icon: Globe, value: "171T", label: "Plastic Particles in Ocean", color: "text-emerald-600" }
   ];
 
   const impacts = [
@@ -101,10 +101,24 @@ const App: React.FC = () => {
     { title: "Human Health", description: "Research has detected microplastics in human blood. Chemical additives like BPA are linked to endocrine issues.", icon: AlertCircle }
   ];
 
+  const solutions = [
+    "Eliminate single-use items (straws, bags, cutlery)",
+    "Support circular economy and refill systems",
+    "Improve waste management and recycling technology",
+    "Global policy changes to limit virgin plastic production",
+    "Switch to sustainable materials like glass or bamboo",
+    "Participate in local cleanups and community education"
+  ];
+
+  const sources = [
+    { name: "OECD: Global Plastics Outlook", url: "https://www.oecd.org/en/topics/sub-issues/plastics.html" },
+    { name: "Geyer et al. (2017) 'Production of all plastics'", url: "https://www.science.org/doi/10.1126/sciadv.1700782" },
+    { name: "UNEP: Visualizing Plastic Pollution", url: "https://www.unep.org/intergovernmental-negotiating-committee-plastic-pollution" }
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-200 transition-colors duration-500">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-200 transition-colors duration-500">
       
-      {/* Theme Toggle */}
       <button onClick={toggleTheme} className="fixed top-6 right-6 z-50 p-3 rounded-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-xl hover:scale-110 active:scale-95 transition-all">
         {isDark ? <Sun className="w-6 h-6 text-yellow-400" /> : <Moon className="w-6 h-6 text-blue-600" />}
       </button>
@@ -117,7 +131,6 @@ const App: React.FC = () => {
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
       `}</style>
 
-      {/* Header */}
       <header className="bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-900 dark:to-slate-900 text-white py-24 px-8">
         <div className="max-w-6xl mx-auto text-center">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-6 border border-white/30">
@@ -129,7 +142,6 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Stats Section */}
       <section className="max-w-6xl mx-auto px-8 -mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {statistics.map((stat, index) => (
@@ -142,88 +154,80 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* TWO-COLUMN CHART SECTION */}
-      <section className="max-w-7xl mx-auto px-8 py-24">
-        <div className="flex flex-col lg:flex-row gap-12 items-center">
-          
-          {/* Left Side: Context & Quote */}
-          <div className="lg:w-1/3 space-y-8">
-            <div className="relative">
-              <Quote className="absolute -top-6 -left-6 w-12 h-12 text-blue-600/10 dark:text-blue-400/10" />
-              <h2 className="text-4xl font-black leading-tight tracking-tight dark:text-white">
-                The pace of waste is <span className="text-blue-600">accelerating</span>. 
-              </h2>
-              <p className="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed text-lg">
-                Since 1950, humans have produced over 8.3 billion metric tons of plastic. Without systemic change, this volume is set to triple by 2060.
-              </p>
-            </div>
-
-            <div className="flex items-start gap-4 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
-              <Info className="w-6 h-6 text-blue-600 shrink-0 mt-1" />
-              <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">
-                Our interactive model tracks real-world production growth. Hover over the bars to see historical metrics.
-              </p>
-            </div>
-
-            <button className="group flex items-center gap-3 bg-slate-900 dark:bg-white dark:text-black text-white px-8 py-4 rounded-xl font-bold transition-all hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white">
-              Take Action <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-
-          {/* Right Side: Interactive Chart */}
-          <div className="lg:w-2/3 w-full bg-white dark:bg-slate-900 rounded-[3rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-800 relative">
-            <h3 className="text-xl font-black mb-12 flex items-center dark:text-white uppercase tracking-widest text-sm opacity-60">
-              <TrendingUp className="w-5 h-5 mr-3 text-blue-600" /> Annual Waste Projection (M Tons)
-            </h3>
+      {/* СЕКЦИЯ С ГРАФИКОМ */}
+      <section className="max-w-6xl mx-auto px-8 py-16">
+        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-slate-100 dark:border-slate-700">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            <div className="relative">
-              {isLoading ? (
-                <div className="h-72 flex flex-col items-center justify-center text-slate-400">
-                  <Loader2 className="w-10 h-10 animate-spin mb-4" />
-                </div>
-              ) : error ? (
-                <div className="h-72 flex items-center justify-center text-red-500">{error}</div>
-              ) : (
-                <div className="overflow-x-auto custom-scrollbar pb-10">
-                  <div className="flex items-end justify-between gap-3 min-w-full h-80 border-b-2 border-slate-100 dark:border-slate-800 px-2">
-                    {realGrowthData.map((d, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center group relative h-full justify-end max-w-[80px]">
-                        
-                        {/* Interactive Tooltip */}
-                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-blue-600 text-white text-[10px] font-black py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 group-hover:-top-14 transition-all duration-300 whitespace-nowrap z-50 shadow-xl pointer-events-none">
-                          {d.value}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900 dark:border-t-blue-600" />
-                        </div>
+            {/* ТЕКСТ СЛЕВА */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="inline-block p-3 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                <AlertCircle className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h2 className="text-4xl font-black leading-tight dark:text-white">
+                The Rising <span className="text-blue-600">Tide</span> of Waste
+              </h2>
+              <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
+                "Our consumption patterns have created a legacy that nature cannot dismantle. The growth is not just linear; it is an environmental emergency."
+              </p>
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Key Insight</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
+                  Based on OECD records, plastic waste generation has outpaced recycling capabilities by over 400% since the 1980s.
+                </p>
+              </div>
+            </div>
 
-                        {/* Bar */}
-                        <div 
-                          className={`w-full rounded-t-xl transition-all duration-500 ease-out animate-grow cursor-help group-hover:brightness-110 group-hover:scale-x-105 ${
-                            d.isLastYear 
-                              ? 'bg-gradient-to-t from-emerald-600 to-teal-400 shadow-lg shadow-emerald-500/20' 
-                              : 'bg-gradient-to-t from-blue-700 via-blue-500 to-cyan-400 shadow-lg shadow-blue-500/10'
-                          }`}
-                          style={{ height: `${d.percentHeight}%`, minHeight: '4px' }}
-                        />
-
-                        {/* Year Label */}
-                        <span className={`text-[10px] font-black mt-6 transition-colors ${
-                          d.isLastYear ? 'text-emerald-500' : 'text-slate-400 group-hover:text-blue-500'
-                        }`}>
-                          {d.year}
-                        </span>
-                      </div>
-                    ))}
+            {/* ГРАФИК СПРАВА */}
+            <div className="lg:col-span-8 relative">
+              <h3 className="text-2xl font-black mb-10 flex items-center dark:text-white">
+                <TrendingUp className="w-8 h-8 mr-3 text-blue-600" /> Global Waste Growth
+              </h3>
+              
+              <div className="relative">
+                {isLoading ? (
+                  <div className="h-72 flex flex-col items-center justify-center text-slate-400">
+                    <Loader2 className="w-10 h-10 animate-spin mb-4" />
+                    <p className="uppercase tracking-widest text-xs font-bold">Syncing Records...</p>
                   </div>
-                </div>
-              )}
+                ) : error ? (
+                  <div className="h-72 flex items-center justify-center text-red-500">{error}</div>
+                ) : (
+                  <div className="overflow-x-auto custom-scrollbar pb-10">
+                    <div className="flex items-end justify-between gap-4 min-w-[500px] h-80 border-b-2 border-slate-100 dark:border-slate-700 px-6">
+                      {realGrowthData.map((d, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center group relative h-full justify-end max-w-[100px]">
+                          
+                          {/* TOOLTIP: Появляется при наведении */}
+                          <div className="absolute -top-14 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black py-2 px-4 rounded-xl opacity-0 group-hover:opacity-100 group-hover:-translate-y-2 transition-all duration-300 whitespace-nowrap z-50 shadow-2xl pointer-events-none">
+                            {d.value}
+                            <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 dark:bg-white rotate-45"></div>
+                          </div>
+
+                          <div 
+                            className={`w-full rounded-t-xl shadow-lg transition-all duration-1000 ease-out animate-grow hover:brightness-110 cursor-help ${
+                              d.isLastYear 
+                                ? 'bg-gradient-to-t from-emerald-600 to-teal-400' 
+                                : 'bg-gradient-to-t from-blue-700 via-blue-500 to-cyan-400'
+                            }`}
+                            style={{ height: `${d.percentHeight}%`, minHeight: '4px' }}
+                          />
+                          <span className={`text-[11px] font-bold mt-6 transform group-hover:scale-110 transition-transform ${
+                            d.isLastYear ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'
+                          }`}>
+                            {d.year}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-
         </div>
       </section>
 
-      {/* Impact & Recovery Sections... (остаются без изменений для экономии места, но включены в логику) */}
-      
       <section className="max-w-6xl mx-auto px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {impacts.map((impact, index) => (
@@ -235,6 +239,62 @@ const App: React.FC = () => {
               <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">{impact.description}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-8 py-16">
+        <div className="bg-slate-900 text-white rounded-[3rem] p-10 md:p-16 shadow-2xl relative overflow-hidden border border-slate-800">
+          <div className="relative z-10">
+            <div className="flex items-center mb-10">
+              <Recycle className="w-10 h-10 mr-4 text-emerald-400" />
+              <h2 className="text-4xl font-black">Path to Recovery</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {solutions.map((solution, index) => (
+                <div key={index} className="flex items-start space-x-4 bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                  <span className="text-emerald-400 font-black text-xl">0{index + 1}</span>
+                  <p className="text-slate-300 font-medium leading-relaxed">{solution}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-8 py-16 border-t border-slate-200 dark:border-slate-800">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-1">
+            <h3 className="text-xl font-black mb-6 dark:text-white">Evidence Base</h3>
+            <div className="space-y-4">
+              {sources.map((source, idx) => (
+                <a key={idx} href={source.url} target="_blank" rel="noreferrer" className="flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-colors group text-sm font-medium">
+                  <span className="truncate">{source.name}</span>
+                  <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
+            <div className="flex items-center mb-8">
+              <Users className="w-6 h-6 mr-3 text-blue-600" />
+              <h2 className="text-2xl font-bold dark:text-white">Contributors</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {team.map((member, index) => (
+                <div key={index} className="flex items-center space-x-4 p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+                  <a href={`https://github.com/${member.github}`} target="_blank" rel="noreferrer" className="relative shrink-0">
+                    <img src={`https://github.com/${member.github}.png`} className="w-16 h-16 rounded-full border-2 border-blue-100 dark:border-slate-700 group-hover:border-blue-500 transition-all shadow-sm object-cover" alt={member.name} />
+                  </a>
+                  <div>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">{member.name}</h4>
+                    <p className="text-[9px] text-blue-600 font-black uppercase tracking-widest">{member.role}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 italic leading-tight">{member.task}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

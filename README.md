@@ -1,15 +1,22 @@
-# Plastic Pollution Report 2026 🌊
+# 🌊 Plastic Pollution Report 2026 — Frontend
 
-### Overview
-This web application visualizes the global plastic waste crisis. The goal of the project is to provide clear statistics and interactive charts to highlight the environmental impact of plastic pollution.
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Lucide](https://img.shields.io/badge/Lucide_Icons-FF5D01?style=for-the-badge&logo=lucide&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=github&logoColor=white)
 
-### Key Features
-* **Data Visualization**: Interactive charts showing the exponential growth of plastic waste.
-* **Environmental Analysis**: Key facts about ocean pollution and health impacts.
-* **Responsive Design**: Optimized for both desktop and mobile viewing.
+An interactive web application designed to visualize the global plastic waste crisis. It transforms complex scientific reports into intuitive charts and analytics.
 
-### Data Sources
-All statistics are based on open-source scientific reports from **OECD** and **Science Advances** (Geyer et al.).
+## ⚙️ Tech Stack
+* **React** — UI components and core logic.
+* **Tailwind CSS** — Modern, responsive styling.
+* **Lucide React** — Iconography and visual elements.
+* **GitHub Pages** — Site hosting.
 
----
-*Scientific Visualization — Group Project 2026.*
+## 🚀 Features
+* **Interactive Chart**: Dynamic visualization of plastic production growth since 1990.
+* **Live Stats**: Integration with a dedicated Backend API for real-time data.
+* **Theme Support**: Seamless Dark and Light mode for better readability.
+
+## 📊 Sources
+Statistics are based on **OECD (Global Plastics Outlook)** reports and **Science Advances** scientific publications.

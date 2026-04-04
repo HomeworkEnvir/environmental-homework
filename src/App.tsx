@@ -20,8 +20,8 @@ const App = () => {
     const fetchData = async () => {
       try {
         const [cardsRes, plasticRes] = await Promise.all([
-          fetch('https://backend-plastic-pollution.onrender.com/stats/cards'),
-          fetch('https://backend-plastic-pollution.onrender.com/stats/plastic')
+          fetch('https://plastic-pollution.onrender.com/stats/cards'),
+          fetch('https://plastic-pollution.onrender.com/stats/plastic')
         ]);
 
         const cards = await cardsRes.json();
